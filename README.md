@@ -1,4 +1,4 @@
-# # 股票投资跟踪系统（GitHub + Notion + 自动化）
+# 股票投资跟踪系统（GitHub + Notion + 自动化）
 
 本项目将你的投资跟踪模板产品化：版本化、可协作、可扩展，并支持每日自动抓取数据、计算技术指标、生成信号、归档报告、同步到 Notion。
 
@@ -74,7 +74,7 @@ python scripts/push_to_notion.py --csv notion_template/daily_metrics.csv
   - Date（Date）
   - Close, EMA20, MACD, ADX, CMF, RSI14（Number）
   - Signal_BUY（Checkbox）
-- 将数据库 ID 与 API Key 填入环境变量后，运行 push_to_notion.py 即可新增页面（默认"追加"模式，去重/更新可按 TODO 注释扩展）
+- 将数据库 ID 与 API Key 填入环境变量后，运行 push_to_notion.py 即可新增页面（默认“追加”模式，去重/更新可按 TODO 注释扩展）
 
 ## 字段说明（节选）
 - 趋势类：MA/EMA(5/10/20/50/200), Bollinger_Mid/Upper/Lower, Ichimoku_*, ADX/DI+/DI-
