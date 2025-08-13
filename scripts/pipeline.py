@@ -31,18 +31,34 @@ def attach_relative_strength(df: pd.DataFrame,
     if benchmark_symbol:
         bench = benchmarks[benchmarks['Symbol'] == benchmark_symbol][['Date','Close']].rename(columns={'Close':'Bench_Close'})
         out = out.merge(bench, on='Date', how='left')
-        out['RelToBenchmark20D'] = out.groupby('Ticker').apply(
-            lambda g: (g['Close'].pct_change(20) - g['Bench_Close'].pct_change(20))
-        ).reset_index(level=0, drop=True)
+        # Calculate relative strength ticker by ticker
+        rel_benchmark_list = []
+        for ticker in out['Ticker'].unique():
+            ticker_data = out[out['Ticker'] == ticker].copy()
+            ticker_data['RelToBenchmark20D'] = (
+                ticker_data['Close'].pct_change(20) - ticker_data['Bench_Close'].pct_change(20)
+            )
+            rel_benchmark_list.append(ticker_data[['Ticker', 'Date', 'RelToBenchmark20D']])
+        rel_benchmark_df = pd.concat(rel_benchmark_list, ignore_index=True)
+        out = out.merge(rel_benchmark_df, on=['Ticker', 'Date'], how='left', suffixes=('', '_rel'))
+        
     if sectors_map:
         tmp = out[['Ticker','Date','Close']].copy()
         tmp['Sector'] = tmp['Ticker'].map(sectors_map)
         sector_series = tmp.groupby(['Sector','Date'])['Close'].mean().reset_index().rename(columns={'Close':'Sector_Close'})
         out = out.merge(tmp[['Ticker','Date','Sector']].drop_duplicates(), on=['Ticker','Date'], how='left')
         out = out.merge(sector_series, on=['Sector','Date'], how='left')
-        out['RelToSector20D'] = out.groupby('Ticker').apply(
-            lambda g: (g['Close'].pct_change(20) - g['Sector_Close'].pct_change(20))
-        ).reset_index(level=0, drop=True)
+        # Calculate relative strength ticker by ticker
+        rel_sector_list = []
+        for ticker in out['Ticker'].unique():
+            ticker_data = out[out['Ticker'] == ticker].copy()
+            ticker_data['RelToSector20D'] = (
+                ticker_data['Close'].pct_change(20) - ticker_data['Sector_Close'].pct_change(20)
+            )
+            rel_sector_list.append(ticker_data[['Ticker', 'Date', 'RelToSector20D']])
+        rel_sector_df = pd.concat(rel_sector_list, ignore_index=True)
+        out = out.merge(rel_sector_df, on=['Ticker', 'Date'], how='left', suffixes=('', '_rel2'))
+    
     return out
 
 def snapshot_tickers(daily: pd.DataFrame) -> pd.DataFrame:
