@@ -1,0 +1,70 @@
+name: Daily Indicators Pipeline (AkShare)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub 使用 UTC，08:30 UTC = 北京时间 16:30
+    - cron: "30 8 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      - name: Prepare output directory
+        run: mkdir -p data
+
+      - name: Fetch A-share OHLCV via AkShare
+        run: |
+          python scripts/fetch_akshare.py \
+            --tickers config/tickers.csv \
+            --out data/prices.csv \
+            --start 2019-01-01
+
+      - name: Fetch benchmark via AkShare
+        run: |
+          python scripts/fetch_benchmarks_akshare.py \
+            --akshare_symbol 000300 \
+            --name SZZZ \
+            --out config/benchmarks.csv \
+            --start 2019-01-01
+
+      - name: Run indicators pipeline
+        run: |
+          python scripts/pipeline.py \
+            --prices data/prices.csv \
+            --benchmarks config/benchmarks.csv \
+            --benchmark_symbol SZZZ \
+            --sectors_map config/sectors_map.csv \
+            --out_daily data/daily_metrics.csv \
+            --out_tickers data/tickers.csv
+
+      - name: Upload artifacts (daily_metrics.csv & tickers.csv)
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-outputs-${{ github.run_number }}
+          path: |
+            data/daily_metrics.csv
+            data/tickers.csv
