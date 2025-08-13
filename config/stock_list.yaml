@@ -1,0 +1,11 @@
+benchmark: "SPY"      # 相对强度的默认基准
+universe:
+  - ticker: "AAPL"
+    name: "Apple Inc."
+    sector: "Technology"
+  - ticker: "MSFT"
+    name: "Microsoft Corp."
+    sector: "Technology"
+  - ticker: "NVDA"
+    name: "NVIDIA Corp."
+    sector: "Technology"
