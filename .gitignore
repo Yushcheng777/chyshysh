@@ -1,2 +1,21 @@
-node_modules/
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
 .env
+.DS_Store
+
+# Data caches
+*.log
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS
+Thumbs.db
+
+# Node.js (keeping existing)
+node_modules/

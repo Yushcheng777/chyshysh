@@ -1,0 +1,17 @@
+{
+  "adx_min": 20,
+  "rsi_buy_range": [45, 70],
+  "atr_break_k": 1.5,
+  "relative_strength_min": 0.0,
+  "radar_logic": {
+    "all": ["Close>EMA20", "MACD>MACD_Signal", "ADX>=20", "CMF>0"],
+    "any": ["Boll_Break_Up", "MACD_Break_Zero"]
+  },
+  "tech_logic": {
+    "any": ["Golden_Cross", "EMA20>EMA50 && EMA50>EMA200"],
+    "all": ["RSI14>=45", "RSI14<=70"]
+  },
+  "buy_logic": {
+    "all": ["Signal_Radar", "Signal_Tech", "ATR_Break", "Relative_Strength>0"]
+  }
+}

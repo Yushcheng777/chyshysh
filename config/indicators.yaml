@@ -1,0 +1,32 @@
+moving_averages:
+  MA: [5, 10, 20, 50, 200]
+  EMA: [5, 10, 20, 50, 200]
+bollinger:
+  length: 20
+  std: 2.0
+ichimoku:
+  tenkan: 9
+  kijun: 26
+  senkou: 52
+adx:
+  length: 14
+macd:
+  fast: 12
+  slow: 26
+  signal: 9
+stochastic:
+  k: 14
+  d: 3
+rsi:
+  length: 14
+roc:
+  length: 12
+atr:
+  length: 14
+hv:
+  window: 20        # 基于对数收益的滚动标准差并年化
+relative_strength:
+  lookback: 20
+vwap: true
+cmf:
+  length: 20
